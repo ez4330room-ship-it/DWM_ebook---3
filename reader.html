@@ -20,40 +20,10 @@ body {
   color: #1c1c1e;
 }
 
-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 1px 8px rgba(0,0,0,0.12);
-  padding: 10px 14px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.left-tools,
-.right-tools {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.title {
-  font-weight: 700;
-  font-size: 16px;
-}
-
 button {
   border: none;
   border-radius: 999px;
-  padding: 9px 14px;
+  padding: 9px 15px;
   background: #007aff;
   color: white;
   font-size: 15px;
@@ -66,11 +36,47 @@ button.secondary {
 }
 
 button:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
+}
+
+#topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 1px 10px rgba(0,0,0,0.12);
+  padding: 10px 14px;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.leftTools {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.centerTitle {
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.rightTools {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 #pageInfo {
-  margin: 8px 0 6px;
+  margin-top: 8px;
   text-align: center;
   font-size: 14px;
   color: #555;
@@ -78,10 +84,11 @@ button:active {
 
 .progress {
   width: 100%;
-  height: 8px;
+  height: 7px;
   background: #d1d1d6;
   border-radius: 999px;
   overflow: hidden;
+  margin-top: 8px;
 }
 
 #bar {
@@ -90,151 +97,101 @@ button:active {
   background: #34c759;
   transition: width 0.25s ease;
 }
-
-.reader-wrap {
-  width: 100%;
-  padding: 16px;
+#viewer{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:20px;
+    min-height:calc(100vh - 170px);
 }
 
-#viewer{
-
-display:flex;
-
-justify-content:center;
-
-padding:20px;
-
-min-height:calc(100vh - 180px);
-
+canvas{
+    background:white;
+    border-radius:8px;
+    box-shadow:0 8px 30px rgba(0,0,0,.18);
+    max-width:100%;
+    margin-bottom:90px;
 }
 
 #loading{
-
-position:absolute;
-
-margin-top:120px;
-
-font-size:22px;
-
-color:#666;
-
-}
-  canvas {
-  display: block;
-  margin: 0 auto 90px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.18);
-  max-width: 100%;
+    margin-top:120px;
+    font-size:22px;
+    color:#666;
 }
 
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 25;
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(12px);
-  padding: 10px 14px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  box-shadow: 0 -1px 10px rgba(0,0,0,0.12);
+#sidebar{
+    position:fixed;
+    top:0;
+    left:-320px;
+    width:300px;
+    height:100%;
+    background:white;
+    box-shadow:4px 0 20px rgba(0,0,0,.2);
+    z-index:100;
+    transition:.25s;
+    overflow:auto;
+    padding:20px;
 }
 
-#menuOverlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 40;
+#sidebar.show{
+    left:0;
 }
 
-#menuOverlay.show {
-  display: block;
+#overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.35);
+    display:none;
+    z-index:90;
 }
 
-#sideMenu {
-  position: fixed;
-  top: 0;
-  left: -310px;
-  width: 300px;
-  max-width: 82vw;
-  height: 100%;
-  background: white;
-  z-index: 50;
-  box-shadow: 4px 0 20px rgba(0,0,0,0.25);
-  transition: left 0.25s ease;
-  padding: 18px;
-  overflow-y: auto;
+#overlay.show{
+    display:block;
 }
 
-#sideMenu.show {
-  left: 0;
+#toc button{
+    width:100%;
+    margin:8px 0;
+    text-align:left;
+    border-radius:12px;
 }
 
-#sideMenu h2 {
-  margin: 0 0 14px;
-  font-size: 22px;
+.bottomBar{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(12px);
+    box-shadow:0 -1px 10px rgba(0,0,0,.12);
+    padding:10px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
 }
 
-.menu-item {
-  display: block;
-  width: 100%;
-  text-align: left;
-  background: #f2f2f7;
-  color: #1c1c1e;
-  margin: 8px 0;
-  border-radius: 14px;
-  padding: 13px 14px;
+@media(max-width:700px){
+
+.toolbar{
+grid-template-columns:1fr;
 }
 
-.menu-item small {
-  display: block;
-  color: #666;
-  margin-top: 4px;
+.leftTools,
+.rightTools{
+justify-content:center;
 }
 
-.loading {
-  text-align: center;
-  padding: 40px 20px;
-  color: #666;
+.centerTitle{
+margin:6px 0;
 }
 
-@media (max-width: 600px) {
-  header {
-    padding: 9px 10px;
-  }
-
-  .toolbar {
-    justify-content: center;
-  }
-
-  .title {
-    width: 100%;
-    text-align: center;
-    order: -1;
-    margin-bottom: 4px;
-  }
-
-  button {
-    padding: 9px 12px;
-    font-size: 14px;
-  }
-
-  .reader-wrap {
-    padding: 10px;
-  }
-
-  canvas {
-    border-radius: 5px;
-    margin-bottom: 88px;
-  }
 }
 </style>
 </head>
+
 <body>
+
+<div id="overlay" onclick="toggleMenu()"></div>
 
 <div id="sidebar">
 
@@ -243,61 +200,81 @@ color:#666;
 <div id="toc">
 
 <button onclick="goPage(1)">封面</button>
+
 <button onclick="goPage(5)">目錄</button>
-<button onclick="goPage(10)">第 1 章</button>
-<button onclick="goPage(52)">第 2 章</button>
-<button onclick="goPage(79)">第 3 章</button>
-<button onclick="goPage(99)">第 4 章</button>
-<button onclick="goPage(107)">第 5 章</button>
+
+<button onclick="goPage(10)">第一章</button>
+
+<button onclick="goPage(52)">第二章</button>
+
+<button onclick="goPage(79)">第三章</button>
+
+<button onclick="goPage(99)">第四章</button>
+
+<button onclick="goPage(107)">第五章</button>
+
 <button onclick="goPage(122)">附錄</button>
+
+</div>
 
 </div>
 
 <header id="topbar">
 
-<div class="left">
+<div class="toolbar">
+
+<div class="leftTools">
 
 <button onclick="toggleMenu()">☰ 目錄</button>
 
-<button onclick="location.href='index.html'">首頁</button>
+<button class="secondary" onclick="location.href='index.html'">首頁</button>
 
 </div>
 
-<div class="center">
+<div class="centerTitle">
 
-<h2>DWM 圖解抗壓指南</h2>
-
-<div id="pageInfo"></div>
+DWM 圖解抗壓指南
 
 </div>
 
-<div class="right">
+<div class="rightTools">
 
-<button onclick="prevPage()">上一頁</button>
+<button class="secondary" onclick="prevPage()">上一頁</button>
 
 <button onclick="nextPage()">下一頁</button>
 
 </div>
 
-</header>
+</div>
+
+<div id="pageInfo">載入中...</div>
 
 <div class="progress">
-
 <div id="bar"></div>
-
 </div>
+
+</header>
 
 <div id="viewer">
 
 <div id="loading">
-載入 PDF...
+PDF 載入中...
 </div>
 
 <canvas id="pdfCanvas"></canvas>
 
 </div>
+
+<div class="bottomBar">
+
+<button class="secondary" onclick="prevPage()">← 上一頁</button>
+
+<button onclick="nextPage()">下一頁 →</button>
+
+</div>
+
 <script>
-const pdfUrl = "pdf/DWM.pdf";
+  const pdfUrl = "pdf/DWM.pdf";
 
 let pdfDoc = null;
 let pageNum = Number(localStorage.getItem("lastPage")) || 1;
@@ -305,91 +282,181 @@ let renderTask = null;
 
 const canvas = document.getElementById("pdfCanvas");
 const ctx = canvas.getContext("2d");
+
+const loading = document.getElementById("loading");
 const pageInfo = document.getElementById("pageInfo");
 const bar = document.getElementById("bar");
-const loading = document.getElementById("loading");
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-  pdfDoc = pdf;
+pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf){
 
-  if (pageNum < 1) pageNum = 1;
-  if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+    pdfDoc = pdf;
 
-  renderPage(pageNum);
-}).catch(function(error) {
-  loading.innerHTML = "PDF 載入失敗，請確認 pdf/DWM.pdf 是否存在。";
-  console.error(error);
+    if(pageNum<1) pageNum=1;
+    if(pageNum>pdfDoc.numPages) pageNum=pdfDoc.numPages;
+
+    renderPage(pageNum);
+
+}).catch(function(err){
+
+    loading.innerHTML="PDF 載入失敗";
+    console.error(err);
+
 });
 
-function renderPage(num) {
-  loading.style.display = "block";
+function renderPage(num){
 
-  pdfDoc.getPage(num).then(function(page) {
-    const rawViewport = page.getViewport({ scale: 1 });
-    const screenWidth = window.innerWidth;
-    let targetWidth = screenWidth * 0.94;
+    loading.style.display="block";
 
-    if (screenWidth >= 900) {
-      targetWidth = Math.min(880, screenWidth * 0.72);
-    }
+    pdfDoc.getPage(num).then(function(page){
 
-    const scale = targetWidth / rawViewport.width;
-    const viewport = page.getViewport({ scale: scale });
+        const rawViewport=page.getViewport({scale:1});
 
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+        let width=window.innerWidth*0.95;
 
-    page.render({
-      canvasContext: ctx,
-      viewport: viewport
-    }).promise.then(function() {
-      loading.style.display = "none";
-      localStorage.setItem("lastPage", num);
-      updateProgress();
+        if(window.innerWidth>900){
+
+            width=900;
+
+        }
+
+        const scale=width/rawViewport.width;
+
+        const viewport=page.getViewport({
+            scale:scale
+        });
+
+        canvas.width=viewport.width;
+        canvas.height=viewport.height;
+
+        renderTask=page.render({
+
+            canvasContext:ctx,
+            viewport:viewport
+
+        });
+
+        renderTask.promise.then(function(){
+
+            loading.style.display="none";
+
+            localStorage.setItem("lastPage",num);
+
+            updateProgress();
+
+        });
+
     });
-  });
+
 }
 
-function updateProgress() {
-  const percent = Math.round((pageNum / pdfDoc.numPages) * 100);
-  pageInfo.innerHTML = "第 " + pageNum + " / " + pdfDoc.numPages + " 頁｜閱讀進度 " + percent + "%";
-  bar.style.width = percent + "%";
+function updateProgress(){
+
+    const percent=Math.round(pageNum/pdfDoc.numPages*100);
+
+    pageInfo.innerHTML=
+    "第 "+pageNum+" / "+pdfDoc.numPages+" 頁　｜　閱讀進度 "+percent+"%";
+
+    bar.style.width=percent+"%";
+
 }
 
-function nextPage() {
-  if (pageNum < pdfDoc.numPages) {
-    pageNum++;
-    renderPage(pageNum);
-  }
-}
+function nextPage(){
 
-function prevPage() {
-  if (pageNum > 1) {
-    pageNum--;
-    renderPage(pageNum);
-  }
-}
+    if(pageNum<pdfDoc.numPages){
 
-function goPage(num) {
-  pageNum = num;
-  renderPage(pageNum);
-  toggleMenu();
-}
+        pageNum++;
 
-function toggleMenu() {
+        renderPage(pageNum);
 
-    const menu = document.getElementById("sidebar");
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
 
-    if(menu.style.display==="block"){
-        menu.style.display="none";
-    }else{
-        menu.style.display="block";
     }
 
 }
+
+function prevPage(){
+
+    if(pageNum>1){
+
+        pageNum--;
+
+        renderPage(pageNum);
+
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+
+    }
+
+}
+  function goPage(num){
+
+    pageNum=num;
+
+    renderPage(pageNum);
+
+    toggleMenu(false);
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+function toggleMenu(force){
+
+    const sidebar=document.getElementById("sidebar");
+    const overlay=document.getElementById("overlay");
+
+    if(force===false){
+
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+        return;
+
+    }
+
+    sidebar.classList.toggle("show");
+    overlay.classList.toggle("show");
+
+}
+
+window.addEventListener("resize",function(){
+
+    clearTimeout(window.resizeTimer);
+
+    window.resizeTimer=setTimeout(function(){
+
+        renderPage(pageNum);
+
+    },300);
+
+});
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key==="ArrowRight"){
+        nextPage();
+    }
+
+    if(e.key==="ArrowLeft"){
+        prevPage();
+    }
+
+    if(e.key==="Escape"){
+        toggleMenu(false);
+    }
+
+});
 </script>
+
 </body>
 </html>
