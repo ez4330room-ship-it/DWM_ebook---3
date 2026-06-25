@@ -287,6 +287,85 @@ color:#666;
 <canvas id="pdfCanvas"></canvas>
 
 </div>
+<script>
+const pdfUrl = "pdf/DWM.pdf";
 
+let pdfDoc = null;
+let pageNum = Number(localStorage.getItem("lastPage")) || 1;
+let renderTask = null;
+
+const canvas = document.getElementById("pdfCanvas");
+const ctx = canvas.getContext("2d");
+const pageInfo = document.getElementById("pageInfo");
+const bar = document.getElementById("bar");
+const loading = document.getElementById("loading");
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+  pdfDoc = pdf;
+  renderPage(pageNum);
+});
+
+function renderPage(num) {
+  loading.style.display = "block";
+
+  if (renderTask) {
+    renderTask.cancel();
+  }
+
+  pdfDoc.getPage(num).then(function(page) {
+    const rawViewport = page.getViewport({ scale: 1 });
+    const screenWidth = window.innerWidth;
+    let targetWidth = screenWidth * 0.94;
+
+    if (screenWidth >= 900) {
+      targetWidth = Math.min(880, screenWidth * 0.72);
+    }
+
+    const scale = targetWidth / rawViewport.width;
+    const viewport = page.getViewport({ scale: scale });
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    renderTask = page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    });
+
+    renderTask.promise.then(function() {
+      loading.style.display = "none";
+      localStorage.setItem("lastPage", num);
+      updateProgress();
+    });
+  });
+}
+
+function updateProgress() {
+  const percent = Math.round((pageNum / pdfDoc.numPages) * 100);
+  pageInfo.innerHTML = "第 " + pageNum + " / " + pdfDoc.numPages + " 頁｜閱讀進度 " + percent + "%";
+  bar.style.width = percent + "%";
+}
+
+function nextPage() {
+  if (pageNum < pdfDoc.numPages) {
+    pageNum++;
+    renderPage(pageNum);
+  }
+}
+
+function prevPage() {
+  if (pageNum > 1) {
+    pageNum--;
+    renderPage(pageNum);
+  }
+}
+
+function toggleMenu() {
+  alert("目錄功能下一步設定");
+}
+</script>
 </body>
 </html>
