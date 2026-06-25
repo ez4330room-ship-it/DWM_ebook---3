@@ -9,9 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -35,10 +33,6 @@ button.secondary {
   color: #1c1c1e;
 }
 
-button:active {
-  transform: scale(0.96);
-}
-
 #topbar {
   position: sticky;
   top: 0;
@@ -56,23 +50,18 @@ button:active {
   gap: 10px;
 }
 
-.leftTools {
+.leftTools, .rightTools {
   display: flex;
   gap: 8px;
-  justify-content: flex-start;
 }
+
+.rightTools { justify-content: flex-end; }
 
 .centerTitle {
   text-align: center;
   font-weight: 700;
   font-size: 16px;
   white-space: nowrap;
-}
-
-.rightTools {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
 }
 
 #pageInfo {
@@ -95,96 +84,115 @@ button:active {
   width: 0%;
   height: 100%;
   background: #34c759;
-  transition: width 0.25s ease;
-}
-#viewer{
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:20px;
-    min-height:calc(100vh - 170px);
 }
 
-canvas{
-    background:white;
-    border-radius:8px;
-    box-shadow:0 8px 30px rgba(0,0,0,.18);
-    max-width:100%;
-    margin-bottom:90px;
+#viewer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  min-height: calc(100vh - 170px);
 }
 
-#loading{
-    margin-top:120px;
-    font-size:22px;
-    color:#666;
+canvas {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.18);
+  max-width: 100%;
+  margin-bottom: 90px;
 }
 
-#sidebar{
-    position:fixed;
-    top:0;
-    left:-320px;
-    width:300px;
-    height:100%;
-    background:white;
-    box-shadow:4px 0 20px rgba(0,0,0,.2);
-    z-index:100;
-    transition:.25s;
-    overflow:auto;
-    padding:20px;
+#loading {
+  margin-top: 120px;
+  font-size: 22px;
+  color: #666;
 }
 
-#sidebar.show{
-    left:0;
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 300px;
+  height: 100%;
+  background: white;
+  box-shadow: 4px 0 20px rgba(0,0,0,.2);
+  z-index: 100;
+  transition: .25s;
+  overflow: auto;
+  padding: 20px;
 }
 
-#overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.35);
-    display:none;
-    z-index:90;
+#sidebar.show { left: 0; }
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: none;
+  z-index: 90;
 }
 
-#overlay.show{
-    display:block;
+#overlay.show { display: block; }
+
+#toc button {
+  width: 100%;
+  margin: 8px 0;
+  text-align: left;
+  border-radius: 12px;
 }
 
-#toc button{
-    width:100%;
-    margin:8px 0;
-    text-align:left;
-    border-radius:12px;
+.bottomBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 -1px 10px rgba(0,0,0,.12);
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
-.bottomBar{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    background:rgba(255,255,255,.96);
-    backdrop-filter:blur(12px);
-    box-shadow:0 -1px 10px rgba(0,0,0,.12);
-    padding:10px;
-    display:flex;
-    justify-content:center;
-    gap:12px;
+/* 夜間模式 */
+body.dark {
+  background: #111;
+  color: #fff;
+}
+
+body.dark #topbar,
+body.dark .bottomBar,
+body.dark #sidebar {
+  background: #1b1b1b;
+  color: #fff;
+}
+
+body.dark #viewer {
+  background: #111;
+}
+
+body.dark #pageInfo {
+  color: #ddd;
+}
+
+body.dark .progress {
+  background: #333;
+}
+
+body.dark canvas {
+  box-shadow: 0 0 20px rgba(255,255,255,.08);
+}
+
+body.dark button.secondary {
+  background: #333;
+  color: #fff;
 }
 
 @media(max-width:700px){
-
-.toolbar{
-grid-template-columns:1fr;
-}
-
-.leftTools,
-.rightTools{
-justify-content:center;
-}
-
-.centerTitle{
-margin:6px 0;
-}
-
+  .toolbar { grid-template-columns: 1fr; }
+  .leftTools, .rightTools { justify-content: center; }
+  .centerTitle { margin: 6px 0; }
 }
 </style>
 </head>
@@ -194,95 +202,60 @@ margin:6px 0;
 <div id="overlay" onclick="toggleMenu()"></div>
 
 <div id="sidebar">
-
 <h2>目錄</h2>
 
 <div id="toc">
-
 <button onclick="goPage(1)">封面</button>
-
 <button onclick="goPage(5)">目錄</button>
-
 <button onclick="goPage(10)">第一章</button>
-
 <button onclick="goPage(52)">第二章</button>
-
 <button onclick="goPage(79)">第三章</button>
-
 <button onclick="goPage(99)">第四章</button>
-
 <button onclick="goPage(107)">第五章</button>
-
 <button onclick="goPage(122)">附錄</button>
-
 </div>
-
 </div>
 
 <header id="topbar">
-
 <div class="toolbar">
 
 <div class="leftTools">
-
 <button onclick="toggleMenu()">☰ 目錄</button>
-
 <button class="secondary" onclick="location.href='index.html'">首頁</button>
-
+<button class="secondary" onclick="toggleDark()">🌙</button>
 </div>
 
-<div class="centerTitle">
-
-DWM 圖解抗壓指南
-
-</div>
+<div class="centerTitle">DWM 圖解抗壓指南</div>
 
 <div class="rightTools">
-
 <button class="secondary" onclick="prevPage()">上一頁</button>
-
 <button onclick="nextPage()">下一頁</button>
-
 </div>
 
 </div>
 
 <div id="pageInfo">載入中...</div>
-
-<div class="progress">
-<div id="bar"></div>
-</div>
-
+<div class="progress"><div id="bar"></div></div>
 </header>
 
 <div id="viewer">
-
-<div id="loading">
-PDF 載入中...
-</div>
-
+<div id="loading">PDF 載入中...</div>
 <canvas id="pdfCanvas"></canvas>
-
 </div>
 
 <div class="bottomBar">
-
 <button class="secondary" onclick="prevPage()">← 上一頁</button>
-
 <button onclick="nextPage()">下一頁 →</button>
-
 </div>
 
 <script>
-  const pdfUrl = "pdf/DWM.pdf";
+const pdfUrl = "pdf/DWM.pdf";
 
 let pdfDoc = null;
 let pageNum = Number(localStorage.getItem("lastPage")) || 1;
-let renderTask = null;
 
 const canvas = document.getElementById("pdfCanvas");
 const ctx = canvas.getContext("2d");
-
 const loading = document.getElementById("loading");
 const pageInfo = document.getElementById("pageInfo");
 const bar = document.getElementById("bar");
@@ -291,170 +264,103 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf){
-
-    pdfDoc = pdf;
-
-    if(pageNum<1) pageNum=1;
-    if(pageNum>pdfDoc.numPages) pageNum=pdfDoc.numPages;
-
-    renderPage(pageNum);
-
-}).catch(function(err){
-
-    loading.innerHTML="PDF 載入失敗";
-    console.error(err);
-
+  pdfDoc = pdf;
+  if(pageNum < 1) pageNum = 1;
+  if(pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+  renderPage(pageNum);
 });
 
 function renderPage(num){
+  loading.style.display = "block";
 
-    loading.style.display="block";
+  pdfDoc.getPage(num).then(function(page){
+    const rawViewport = page.getViewport({scale:1});
+    let width = window.innerWidth * 0.95;
 
-    pdfDoc.getPage(num).then(function(page){
+    if(window.innerWidth > 900){
+      width = 900;
+    }
 
-        const rawViewport=page.getViewport({scale:1});
+    const scale = width / rawViewport.width;
+    const viewport = page.getViewport({scale:scale});
 
-        let width=window.innerWidth*0.95;
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
 
-        if(window.innerWidth>900){
-
-            width=900;
-
-        }
-
-        const scale=width/rawViewport.width;
-
-        const viewport=page.getViewport({
-            scale:scale
-        });
-
-        canvas.width=viewport.width;
-        canvas.height=viewport.height;
-
-        renderTask=page.render({
-
-            canvasContext:ctx,
-            viewport:viewport
-
-        });
-
-        renderTask.promise.then(function(){
-
-            loading.style.display="none";
-
-            localStorage.setItem("lastPage",num);
-
-            updateProgress();
-
-        });
-
+    page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    }).promise.then(function(){
+      loading.style.display = "none";
+      localStorage.setItem("lastPage", num);
+      updateProgress();
     });
-
+  });
 }
 
 function updateProgress(){
-
-    const percent=Math.round(pageNum/pdfDoc.numPages*100);
-
-    pageInfo.innerHTML=
-    "第 "+pageNum+" / "+pdfDoc.numPages+" 頁　｜　閱讀進度 "+percent+"%";
-
-    bar.style.width=percent+"%";
-
+  const percent = Math.round(pageNum / pdfDoc.numPages * 100);
+  pageInfo.innerHTML = "第 " + pageNum + " / " + pdfDoc.numPages + " 頁　｜　閱讀進度 " + percent + "%";
+  bar.style.width = percent + "%";
 }
 
 function nextPage(){
-
-    if(pageNum<pdfDoc.numPages){
-
-        pageNum++;
-
-        renderPage(pageNum);
-
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
-
-    }
-
+  if(pageNum < pdfDoc.numPages){
+    pageNum++;
+    renderPage(pageNum);
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
 }
 
 function prevPage(){
-
-    if(pageNum>1){
-
-        pageNum--;
-
-        renderPage(pageNum);
-
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
-
-    }
-
-}
-  function goPage(num){
-
-    pageNum=num;
-
+  if(pageNum > 1){
+    pageNum--;
     renderPage(pageNum);
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+}
 
-    toggleMenu(false);
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
+function goPage(num){
+  pageNum = num;
+  renderPage(pageNum);
+  toggleMenu(false);
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 function toggleMenu(force){
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
 
-    const sidebar=document.getElementById("sidebar");
-    const overlay=document.getElementById("overlay");
+  if(force === false){
+    sidebar.classList.remove("show");
+    overlay.classList.remove("show");
+    return;
+  }
 
-    if(force===false){
-
-        sidebar.classList.remove("show");
-        overlay.classList.remove("show");
-        return;
-
-    }
-
-    sidebar.classList.toggle("show");
-    overlay.classList.toggle("show");
-
+  sidebar.classList.toggle("show");
+  overlay.classList.toggle("show");
 }
 
-window.addEventListener("resize",function(){
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
 
-    clearTimeout(window.resizeTimer);
+if(localStorage.getItem("darkMode") === "true"){
+  document.body.classList.add("dark");
+}
 
-    window.resizeTimer=setTimeout(function(){
-
-        renderPage(pageNum);
-
-    },300);
-
+window.addEventListener("resize", function(){
+  clearTimeout(window.resizeTimer);
+  window.resizeTimer = setTimeout(function(){
+    renderPage(pageNum);
+  }, 300);
 });
 
-document.addEventListener("keydown",function(e){
-
-    if(e.key==="ArrowRight"){
-        nextPage();
-    }
-
-    if(e.key==="ArrowLeft"){
-        prevPage();
-    }
-
-    if(e.key==="Escape"){
-        toggleMenu(false);
-    }
-
+document.addEventListener("keydown", function(e){
+  if(e.key === "ArrowRight") nextPage();
+  if(e.key === "ArrowLeft") prevPage();
+  if(e.key === "Escape") toggleMenu(false);
 });
 </script>
 
