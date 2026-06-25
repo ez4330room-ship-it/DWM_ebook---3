@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>DWM 電子書</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <h1>DWM 電子書</h1>
+  <p id="progressText">閱讀進度：0%</p>
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+</header>
+
+<main>
+  <button onclick="prevPage()">上一頁</button>
+  <span id="pageInfo">第 1 頁</span>
+  <button onclick="nextPage()">下一頁</button>
+
+  <br>
+
+  <canvas id="pdfCanvas"></canvas>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="js/script.js"></script>
+
+</body>
+</html>
