@@ -325,6 +325,15 @@ function renderPage(num) {
 
     canvas.width = viewport.width;
     canvas.height = viewport.height;
+
+    page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    }).promise.then(function() {
+      loading.style.display = "none";
+      localStorage.setItem("lastPage", num);
+      updateProgress();
+    });
   });
 }
 
