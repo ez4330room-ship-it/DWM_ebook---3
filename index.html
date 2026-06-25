@@ -1,32 +1,137 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <title>DWM 電子書</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DWM電子書</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+
+background:white;
+width:380px;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+text-align:center;
+
+}
+
+img{
+
+width:180px;
+margin-bottom:20px;
+
+}
+
+button{
+
+width:100%;
+padding:15px;
+font-size:18px;
+margin-top:15px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:#0066cc;
+color:white;
+
+}
+
+.progress{
+
+height:12px;
+background:#ddd;
+border-radius:10px;
+margin-top:20px;
+overflow:hidden;
+
+}
+
+.progress div{
+
+height:100%;
+background:#4caf50;
+width:0%;
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-<header>
-  <h1>DWM 電子書</h1>
-  <p id="progressText">閱讀進度：0%</p>
-  <div class="progress">
-    <div id="progressBar"></div>
-  </div>
-</header>
+<div class="card">
 
-<main>
-  <button onclick="prevPage()">上一頁</button>
-  <span id="pageInfo">第 1 頁</span>
-  <button onclick="nextPage()">下一頁</button>
+<h1>DWM</h1>
 
-  <br>
+<h3>圖解抗壓指南</h3>
 
-  <canvas id="pdfCanvas"></canvas>
-</main>
+<button onclick="startBook()">
+開始閱讀
+</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="js/script.js"></script>
+<button onclick="continueBook()">
+繼續閱讀
+</button>
+
+<p id="percent">閱讀進度 0%</p>
+
+<div class="progress">
+
+<div id="bar"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let page=localStorage.getItem("lastPage");
+
+if(page==null){
+
+page=1;
+
+}
+
+let total=132;
+
+let p=Math.round(page/total*100);
+
+document.getElementById("bar").style.width=p+"%";
+
+document.getElementById("percent").innerHTML="閱讀進度 "+p+"%";
+
+function startBook(){
+
+localStorage.setItem("lastPage",1);
+
+window.location="reader.html";
+
+}
+
+function continueBook(){
+
+window.location="reader.html";
+
+}
+
+</script>
 
 </body>
 </html>
