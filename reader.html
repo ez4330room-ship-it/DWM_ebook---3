@@ -162,18 +162,20 @@ function renderPage(num){
 
 pdfDoc.getPage(num).then(function(page){
 
-const viewport=page.getViewport({scale:1.5});
+const containerWidth = window.innerWidth * 0.9;
 
-canvas.width=viewport.width;
+const viewport = page.getViewport({ scale: 1 });
 
-canvas.height=viewport.height;
+const scale = containerWidth / viewport.width;
+
+const scaledViewport = page.getViewport({ scale: scale });
+
+canvas.width = scaledViewport.width;
+canvas.height = scaledViewport.height;
 
 page.render({
-
-canvasContext:ctx,
-
-viewport:viewport
-
+    canvasContext: ctx,
+    viewport: scaledViewport
 });
 
 localStorage.setItem("lastPage",num);
