@@ -213,208 +213,61 @@ canvas {
 </head>
 <body>
 
-<div id="menuOverlay" onclick="toggleMenu()"></div>
+<div id="sidebar">
 
-<nav id="sideMenu">
-  <h2>目錄</h2>
+<h2>目錄</h2>
 
-  <button class="menu-item" onclick="goPage(1)">
-    封面
-    <small>第 1 頁</small>
-  </button>
+<div id="toc"></div>
 
-  <button class="menu-item" onclick="goPage(4)">
-    第一章
-    <small>第 4 頁</small>
-  </button>
+</div>
 
-  <button class="menu-item" onclick="goPage(28)">
-    第二章
-    <small>第 28 頁</small>
-  </button>
+<header id="topbar">
 
-  <button class="menu-item" onclick="goPage(52)">
-    第三章
-    <small>第 52 頁</small>
-  </button>
+<div class="left">
 
-  <button class="menu-item" onclick="goPage(79)">
-    第四章
-    <small>第 79 頁</small>
-  </button>
+<button onclick="toggleMenu()">☰ 目錄</button>
 
-  <button class="menu-item" onclick="goPage(103)">
-    第五章
-    <small>第 103 頁</small>
-  </button>
-</nav>
+<button onclick="location.href='index.html'">首頁</button>
 
-<header>
-  <div class="toolbar">
-    <div class="left-tools">
-      <button onclick="toggleMenu()">☰ 目錄</button>
-      <button class="secondary" onclick="location.href='index.html'">首頁</button>
-    </div>
+</div>
 
-    <div class="title">DWM 圖解抗壓指南</div>
+<div class="center">
 
-    <div class="right-tools">
-      <button class="secondary" onclick="prevPage()">上一頁</button>
-      <button onclick="nextPage()">下一頁</button>
-    </div>
-  </div>
+<h2>DWM 圖解抗壓指南</h2>
 
-  <p id="pageInfo">載入中...</p>
+<div id="pageInfo"></div>
 
-  <div class="progress">
-    <div id="bar"></div>
-  </div>
+</div>
+
+<div class="right">
+
+<button onclick="prevPage()">上一頁</button>
+
+<button onclick="nextPage()">下一頁</button>
+
+</div>
+
 </header>
 
-<div class="reader-wrap">
-  <div id="loading" class="loading">PDF 載入中...</div>
-  <canvas id="pdfCanvas"></canvas>
+<div class="progress">
+
+<div id="bar"></div>
+
 </div>
 
-<div class="bottom-nav">
-  <button class="secondary" onclick="prevPage()">← 上一頁</button>
-  <button onclick="nextPage()">下一頁 →</button>
+<div id="viewer">
+
+<canvas id="pdfCanvas"></canvas>
+
 </div>
-<script>
-const pdfUrl = "pdf/DWM.pdf";
 
-let pdfDoc = null;
-let pageNum = Number(localStorage.getItem("lastPage")) || 1;
-let renderTask = null;
+<div id="bottomBar">
 
-const canvas = document.getElementById("pdfCanvas");
-const ctx = canvas.getContext("2d");
-const pageInfo = document.getElementById("pageInfo");
-const bar = document.getElementById("bar");
-const loading = document.getElementById("loading");
+<button onclick="prevPage()">← 上一頁</button>
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+<button onclick="nextPage()">下一頁 →</button>
 
-pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-  pdfDoc = pdf;
-
-  if (pageNum < 1) pageNum = 1;
-  if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
-
-  renderPage(pageNum);
-}).catch(function(error) {
-  loading.innerHTML = "PDF 載入失敗，請確認 pdf/DWM.pdf 是否存在。";
-  console.error(error);
-});
-
-function renderPage(num) {
-  if (!pdfDoc) return;
-
-  loading.style.display = "block";
-
-  if (renderTask) {
-    renderTask.cancel();
-  }
-
-  pdfDoc.getPage(num).then(function(page) {
-    const rawViewport = page.getViewport({ scale: 1 });
-
-    const screenWidth = window.innerWidth;
-    let targetWidth = screenWidth * 0.94;
-
-    if (screenWidth >= 900) {
-      targetWidth = Math.min(880, screenWidth * 0.72);
-    }
-
-    const scale = targetWidth / rawViewport.width;
-    const viewport = page.getViewport({ scale: scale });
-
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    renderTask = page.render({
-      canvasContext: ctx,
-      viewport: viewport
-    });
-
-    renderTask.promise.then(function() {
-      loading.style.display = "none";
-      localStorage.setItem("lastPage", num);
-      updateProgress();
-    }).catch(function(error) {
-      if (error && error.name !== "RenderingCancelledException") {
-        console.error(error);
-      }
-    });
-  });
-}
-
-function updateProgress() {
-  const percent = Math.round((pageNum / pdfDoc.numPages) * 100);
-
-  pageInfo.innerHTML =
-    "第 " + pageNum + " / " + pdfDoc.numPages + " 頁　｜　閱讀進度 " + percent + "%";
-
-  bar.style.width = percent + "%";
-}
-
-function nextPage() {
-  if (!pdfDoc) return;
-
-  if (pageNum < pdfDoc.numPages) {
-    pageNum++;
-    renderPage(pageNum);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-}
-
-function prevPage() {
-  if (!pdfDoc) return;
-
-  if (pageNum > 1) {
-    pageNum--;
-    renderPage(pageNum);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-}
-
-function goPage(num) {
-  if (!pdfDoc) return;
-
-  pageNum = Math.max(1, Math.min(num, pdfDoc.numPages));
-  renderPage(pageNum);
-  toggleMenu(false);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function toggleMenu(force) {
-  const menu = document.getElementById("sideMenu");
-  const overlay = document.getElementById("menuOverlay");
-
-  if (force === false) {
-    menu.classList.remove("show");
-    overlay.classList.remove("show");
-    return;
-  }
-
-  menu.classList.toggle("show");
-  overlay.classList.toggle("show");
-}
-
-window.addEventListener("resize", function() {
-  clearTimeout(window.resizeTimer);
-  window.resizeTimer = setTimeout(function() {
-    renderPage(pageNum);
-  }, 250);
-});
-
-document.addEventListener("keydown", function(e) {
-  if (e.key === "ArrowRight") nextPage();
-  if (e.key === "ArrowLeft") prevPage();
-  if (e.key === "Escape") toggleMenu(false);
-});
-</script>
+</div>
 
 </body>
 </html>
