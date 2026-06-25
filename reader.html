@@ -358,11 +358,22 @@ window.addEventListener("resize", function(){
 });
 
 document.addEventListener("keydown", function(e){
-  if(e.key === "ArrowRight") nextPage();
-  if(e.key === "ArrowLeft") prevPage();
-  if(e.key === "Escape") toggleMenu(false);
+
+    if(e.key === "ArrowRight"){
+        nextPage();
+    }
+
+    if(e.key === "ArrowLeft"){
+        prevPage();
+    }
+
+    if(e.key === "Escape"){
+        toggleMenu(false);
+    }
+
 });
-  /* ==========================
+
+/* ==========================
    手機左右滑動翻頁
 ========================== */
 
@@ -379,18 +390,16 @@ document.addEventListener("touchend", function(e){
 
     const diff = touchEndX - touchStartX;
 
-    // 向左滑 → 下一頁
     if(diff < -60){
         nextPage();
     }
 
-    // 向右滑 → 上一頁
     if(diff > 60){
         prevPage();
     }
 
 }, {passive:true});
-</script>
+
 /* ==========================
    點一下隱藏工具列
 ========================== */
@@ -404,18 +413,11 @@ function toggleUI(){
 
     uiHidden = !uiHidden;
 
-    if(uiHidden){
-
-        top.style.display = "none";
-        bottom.style.display = "none";
-
-    }else{
-
-        top.style.display = "";
-        bottom.style.display = "";
-
-    }
+    top.style.display = uiHidden ? "none" : "";
+    bottom.style.display = uiHidden ? "none" : "";
 
 }
+</script>
+
 </body>
 </html>
