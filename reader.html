@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>DWM閱讀器</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<style>
+
+body{
+
+margin:0;
+
+background:#ececec;
+
+font-family:Arial;
+
+}
+
+header{
+
+background:white;
+
+padding:15px;
+
+position:sticky;
+
+top:0;
+
+box-shadow:0 2px 10px rgba(0,0,0,.15);
+
+text-align:center;
+
+}
+
+button{
+
+padding:10px 20px;
+
+margin:10px;
+
+border:none;
+
+border-radius:10px;
+
+background:#0066cc;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+.progress{
+
+width:90%;
+
+height:12px;
+
+background:#ddd;
+
+margin:auto;
+
+border-radius:10px;
+
+overflow:hidden;
+
+}
+
+.progress div{
+
+height:100%;
+
+background:#4caf50;
+
+width:0%;
+
+}
+
+canvas{
+
+display:block;
+
+margin:20px auto;
+
+background:white;
+
+box-shadow:0 5px 20px rgba(0,0,0,.2);
+
+max-width:100%;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<button onclick="location.href='index.html'">
+
+首頁
+
+</button>
+
+<button onclick="prevPage()">
+
+上一頁
+
+</button>
+
+<button onclick="nextPage()">
+
+下一頁
+
+</button>
+
+<p id="pageInfo"></p>
+
+<div class="progress">
+
+<div id="bar"></div>
+
+</div>
+
+</header>
+
+<canvas id="pdfCanvas"></canvas>
+
+<script>
+
+const pdfUrl="pdf/DWM.pdf";
+
+let pdfDoc=null;
+
+let pageNum=Number(localStorage.getItem("lastPage"))||1;
+
+const canvas=document.getElementById("pdfCanvas");
+
+const ctx=canvas.getContext("2d");
+
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf){
+
+pdfDoc=pdf;
+
+renderPage(pageNum);
+
+});
+
+function renderPage(num){
+
+pdfDoc.getPage(num).then(function(page){
+
+const viewport=page.getViewport({scale:1.5});
+
+canvas.width=viewport.width;
+
+canvas.height=viewport.height;
+
+page.render({
+
+canvasContext:ctx,
+
+viewport:viewport
+
+});
+
+localStorage.setItem("lastPage",num);
+
+document.getElementById("pageInfo").innerHTML="第 "+num+" / "+pdfDoc.numPages+" 頁";
+
+document.getElementById("bar").style.width=(num/pdfDoc.numPages*100)+"%";
+
+});
+
+}
+
+function nextPage(){
+
+if(pageNum<pdfDoc.numPages){
+
+pageNum++;
+
+renderPage(pageNum);
+
+}
+
+}
+
+function prevPage(){
+
+if(pageNum>1){
+
+pageNum--;
+
+renderPage(pageNum);
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
