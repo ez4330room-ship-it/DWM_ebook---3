@@ -100,6 +100,9 @@ canvas {
   box-shadow: 0 8px 30px rgba(0,0,0,.18);
   max-width: 100%;
   margin-bottom: 90px;
+}#viewer,
+#pdfCanvas {
+  touch-action: pan-y;
 }
 
 #loading {
@@ -378,28 +381,30 @@ document.addEventListener("keydown", function(e){
 ========================== */
 
 let touchStartX = 0;
-let touchEndX = 0;
+let touchStartY = 0;
 
-document.addEventListener("touchstart", function(e){
-    touchStartX = e.changedTouches[0].screenX;
+const viewer = document.getElementById("viewer");
+
+viewer.addEventListener("touchstart", function(e){
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
 }, {passive:true});
 
-document.addEventListener("touchend", function(e){
+viewer.addEventListener("touchend", function(e){
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
 
-    touchEndX = e.changedTouches[0].screenX;
+  const diffX = touchEndX - touchStartX;
+  const diffY = touchEndY - touchStartY;
 
-    const diff = touchEndX - touchStartX;
-
-    if(diff < -60){
-        nextPage();
+  if (Math.abs(diffX) > 80 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+    if (diffX < 0) {
+      nextPage();
+    } else {
+      prevPage();
     }
-
-    if(diff > 60){
-        prevPage();
-    }
-
+  }
 }, {passive:true});
-
 /* ==========================
    點一下隱藏工具列
 ========================== */
