@@ -311,10 +311,6 @@ pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
 function renderPage(num) {
   loading.style.display = "block";
 
-  if (renderTask) {
-    renderTask.cancel();
-  }
-
   pdfDoc.getPage(num).then(function(page) {
     const rawViewport = page.getViewport({ scale: 1 });
     const screenWidth = window.innerWidth;
@@ -329,17 +325,6 @@ function renderPage(num) {
 
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-
-    renderTask = page.render({
-      canvasContext: ctx,
-      viewport: viewport
-    });
-
-    renderTask.promise.then(function() {
-      loading.style.display = "none";
-      localStorage.setItem("lastPage", num);
-      updateProgress();
-    });
   });
 }
 
