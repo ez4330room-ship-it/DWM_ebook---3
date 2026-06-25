@@ -305,7 +305,14 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
   pdfDoc = pdf;
+
+  if (pageNum < 1) pageNum = 1;
+  if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+
   renderPage(pageNum);
+}).catch(function(error) {
+  loading.innerHTML = "PDF 載入失敗，請確認 pdf/DWM.pdf 是否存在。";
+  console.error(error);
 });
 
 function renderPage(num) {
