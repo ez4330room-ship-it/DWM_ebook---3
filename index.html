@@ -2,135 +2,157 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DWM電子書</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="css/style.css">
+<title>DWM 電子書</title>
 
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#f5f5f5;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+* {
+  box-sizing: border-box;
 }
 
-.card{
-
-background:white;
-width:380px;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-text-align:center;
-
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", Arial, sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1c1c1e;
 }
 
-img{
-
-width:180px;
-margin-bottom:20px;
-
+.card {
+  width: 90%;
+  max-width: 430px;
+  background: white;
+  border-radius: 24px;
+  padding: 34px 26px;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(0,0,0,.16);
 }
 
-button{
-
-width:100%;
-padding:15px;
-font-size:18px;
-margin-top:15px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-background:#0066cc;
-color:white;
-
+.badge {
+  display: inline-block;
+  background: #e8f0ff;
+  color: #2563eb;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  margin-bottom: 18px;
 }
 
-.progress{
-
-height:12px;
-background:#ddd;
-border-radius:10px;
-margin-top:20px;
-overflow:hidden;
-
+h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.35;
 }
 
-.progress div{
-
-height:100%;
-background:#4caf50;
-width:0%;
-
+.subtitle {
+  margin: 12px 0 26px;
+  color: #555;
+  font-size: 16px;
 }
 
+button {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 15px 18px;
+  margin: 8px 0;
+  background: #2563eb;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.progressText {
+  margin-top: 22px;
+  color: #555;
+  font-size: 15px;
+}
+
+.progress {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+#bar {
+  width: 0%;
+  height: 100%;
+  background: #22c55e;
+}
+
+.footer {
+  margin-top: 24px;
+  font-size: 13px;
+  color: #888;
+}
 </style>
-
 </head>
 
 <body>
 
 <div class="card">
 
-<h1>DWM</h1>
+  <div class="badge">DWM 電子書</div>
 
-<h3>圖解抗壓指南</h3>
+  <h1>圖解抗壓指南</h1>
 
-<button onclick="startBook()">
-開始閱讀
-</button>
+  <div class="subtitle">
+    壓力之下，擇善而行
+  </div>
 
-<button onclick="continueBook()">
-繼續閱讀
-</button>
+  <button onclick="startReading()">
+    開始閱讀
+  </button>
 
-<p id="percent">閱讀進度 0%</p>
+  <button class="secondary" onclick="continueReading()">
+    繼續閱讀
+  </button>
 
-<div class="progress">
+  <div class="progressText" id="progressText">
+    閱讀進度 0%
+  </div>
 
-<div id="bar"></div>
+  <div class="progress">
+    <div id="bar"></div>
+  </div>
 
-</div>
+  <div class="footer">
+    自動記錄上次閱讀頁面
+  </div>
 
 </div>
 
 <script>
+const totalPages = 132;
+const lastPage = Number(localStorage.getItem("lastPage")) || 1;
+const percent = Math.round(lastPage / totalPages * 100);
 
-let page=localStorage.getItem("lastPage");
+document.getElementById("progressText").innerHTML =
+  "閱讀進度 " + percent + "%（第 " + lastPage + " / " + totalPages + " 頁）";
 
-if(page==null){
+document.getElementById("bar").style.width = percent + "%";
 
-page=1;
-
+function startReading() {
+  localStorage.setItem("lastPage", 1);
+  location.href = "reader.html";
 }
 
-let total=132;
-
-let p=Math.round(page/total*100);
-
-document.getElementById("bar").style.width=p+"%";
-
-document.getElementById("percent").innerHTML="閱讀進度 "+p+"%";
-
-function startBook(){
-
-localStorage.setItem("lastPage",1);
-
-window.location="reader.html";
-
+function continueReading() {
+  location.href = "reader.html";
 }
-
-function continueBook(){
-
-window.location="reader.html";
-
-}
-
 </script>
 
 </body>
