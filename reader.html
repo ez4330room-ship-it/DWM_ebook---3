@@ -349,7 +349,15 @@ function prevPage() {
 }
 
 function toggleMenu() {
-  alert("目錄功能下一步設定");
+
+    const menu = document.getElementById("sidebar");
+
+    if(menu.style.display==="block"){
+        menu.style.display="none";
+    }else{
+        menu.style.display="block";
+    }
+
 }
 </script>
 </body>
