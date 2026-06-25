@@ -241,57 +241,47 @@ body.dark button.secondary {
   .centerTitle { margin: 6px 0; }
 }
 
-/* 滑動提示 */
-#swipeHint {
+/* 滑動提示（常駐邊緣箭頭，不擋內容） */
+.swipeArrow {
   position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: rgba(0,0,0,.55);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  text-align: center;
-  opacity: 0;
-  transition: opacity .35s ease;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  font-size: 26px;
+  color: rgba(0,0,0,.28);
+  pointer-events: none;
+  animation: swipeArrowPulse 1.8s ease-in-out infinite;
+  user-select: none;
 }
 
-#swipeHint.show {
-  display: flex;
-  opacity: 1;
+#swipeArrowLeft { left: 8px; animation-delay: 0s; }
+#swipeArrowRight { right: 8px; animation-delay: .3s; }
+
+body.dark .swipeArrow {
+  color: rgba(255,255,255,.28);
 }
 
-#swipeHint.fadeOut {
-  opacity: 0;
+@keyframes swipeArrowPulse {
+  0%, 100% { opacity: .25; transform: translateY(-50%) translateX(0); }
+  50%      { opacity: .7;  transform: translateY(-50%) translateX(0); }
 }
 
-.swipeHintInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
+#swipeArrowLeft.nudge { animation: swipeArrowPulseLeft 1.8s ease-in-out infinite; }
+#swipeArrowRight.nudge { animation: swipeArrowPulseRight 1.8s ease-in-out infinite; }
+
+@keyframes swipeArrowPulseLeft {
+  0%, 100% { opacity: .25; transform: translateY(-50%) translateX(0); }
+  50%      { opacity: .7;  transform: translateY(-50%) translateX(-4px); }
 }
 
-.swipeHintIcon {
-  font-size: 46px;
-  animation: swipeMove 1.4s ease-in-out infinite;
+@keyframes swipeArrowPulseRight {
+  0%, 100% { opacity: .25; transform: translateY(-50%) translateX(0); }
+  50%      { opacity: .7;  transform: translateY(-50%) translateX(4px); }
 }
 
-.swipeHintText {
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-.swipeHintTap {
-  margin-top: 6px;
-  font-size: 13px;
-  opacity: .75;
-}
-
-@keyframes swipeMove {
-  0%   { transform: translateX(18px); opacity: .4; }
-  50%  { transform: translateX(-18px); opacity: 1; }
-  100% { transform: translateX(18px); opacity: .4; }
+@media(min-width:900px){
+  /* 桌機通常用按鈕/鍵盤翻頁，箭頭提示意義不大，淡化處理 */
+  .swipeArrow { display: none; }
 }
 </style>
 </head>
@@ -348,13 +338,8 @@ body.dark button.secondary {
 <canvas id="pdfCanvas" aria-label="DWM 圖解抗壓指南內容頁"></canvas>
 </div>
 
-<div id="swipeHint" onclick="dismissSwipeHint()">
-  <div class="swipeHintInner">
-    <div class="swipeHintIcon">👈 👉</div>
-    <div class="swipeHintText">左右滑動即可翻頁</div>
-    <div class="swipeHintTap">點一下畫面關閉提示</div>
-  </div>
-</div>
+<div id="swipeArrowLeft" class="swipeArrow" aria-hidden="true">‹</div>
+<div id="swipeArrowRight" class="swipeArrow" aria-hidden="true">›</div>
 
 <div class="bottomBar">
 <button class="secondary" onclick="prevPage()">← 上一頁</button>
@@ -392,7 +377,6 @@ function loadPdf(){
     if(pageNum < 1) pageNum = 1;
     if(pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
     renderPage(pageNum);
-    maybeShowSwipeHint();
   }).catch(function(err){
     console.error("PDF 載入失敗：", err);
     loading.classList.add("error");
@@ -608,7 +592,6 @@ viewer.addEventListener("touchend", function(e){
   const diffY = touchEndY - touchStartY;
 
   if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
-    dismissSwipeHint();
     if (diffX < 0) {
       nextPage();
     } else {
@@ -631,43 +614,15 @@ let uiHidden = false;
 function toggleUI(){
   const top = document.getElementById("topbar");
   const bottom = document.querySelector(".bottomBar");
+  const arrowL = document.getElementById("swipeArrowLeft");
+  const arrowR = document.getElementById("swipeArrowRight");
 
   uiHidden = !uiHidden;
 
   top.style.display = uiHidden ? "none" : "";
   bottom.style.display = uiHidden ? "none" : "";
-}
-
-/* ==========================
-   滑動提示（僅首次造訪顯示）
-========================== */
-
-const SWIPE_HINT_KEY = STORAGE_PREFIX + "swipeHintShown";
-let swipeHintTimer = null;
-
-function maybeShowSwipeHint(){
-  if(localStorage.getItem(SWIPE_HINT_KEY) === "true") return;
-  // 只在觸控裝置上顯示，滑鼠使用者用方向鍵/按鈕翻頁，提示沒有意義
-  if(!("ontouchstart" in window)) return;
-
-  const hint = document.getElementById("swipeHint");
-  hint.classList.add("show");
-
-  swipeHintTimer = setTimeout(dismissSwipeHint, 3200);
-}
-
-function dismissSwipeHint(){
-  const hint = document.getElementById("swipeHint");
-  if(!hint.classList.contains("show")) return;
-
-  clearTimeout(swipeHintTimer);
-  hint.classList.add("fadeOut");
-  localStorage.setItem(SWIPE_HINT_KEY, "true");
-
-  setTimeout(function(){
-    hint.classList.remove("show");
-    hint.classList.remove("fadeOut");
-  }, 350);
+  arrowL.style.display = uiHidden ? "none" : "";
+  arrowR.style.display = uiHidden ? "none" : "";
 }
 
 loadPdf();
