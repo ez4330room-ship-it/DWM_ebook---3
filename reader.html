@@ -240,7 +240,18 @@ color:#666;
 
 <h2>目錄</h2>
 
-<div id="toc"></div>
+<div id="toc">
+
+<button onclick="goPage(1)">封面</button>
+<button onclick="goPage(5)">目錄</button>
+<button onclick="goPage(10)">第 1 章</button>
+<button onclick="goPage(52)">第 2 章</button>
+<button onclick="goPage(79)">第 3 章</button>
+<button onclick="goPage(99)">第 4 章</button>
+<button onclick="goPage(107)">第 5 章</button>
+<button onclick="goPage(122)">附錄</button>
+
+</div>
 
 </div>
 
@@ -362,6 +373,12 @@ function prevPage() {
     pageNum--;
     renderPage(pageNum);
   }
+}
+
+function goPage(num) {
+  pageNum = num;
+  renderPage(pageNum);
+  toggleMenu();
 }
 
 function toggleMenu() {
