@@ -240,6 +240,59 @@ body.dark button.secondary {
   .leftTools, .rightTools { justify-content: center; }
   .centerTitle { margin: 6px 0; }
 }
+
+/* 滑動提示 */
+#swipeHint {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+
+#swipeHint.show {
+  display: flex;
+  opacity: 1;
+}
+
+#swipeHint.fadeOut {
+  opacity: 0;
+}
+
+.swipeHintInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.swipeHintIcon {
+  font-size: 46px;
+  animation: swipeMove 1.4s ease-in-out infinite;
+}
+
+.swipeHintText {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.swipeHintTap {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: .75;
+}
+
+@keyframes swipeMove {
+  0%   { transform: translateX(18px); opacity: .4; }
+  50%  { transform: translateX(-18px); opacity: 1; }
+  100% { transform: translateX(18px); opacity: .4; }
+}
 </style>
 </head>
 
@@ -295,6 +348,14 @@ body.dark button.secondary {
 <canvas id="pdfCanvas" aria-label="DWM 圖解抗壓指南內容頁"></canvas>
 </div>
 
+<div id="swipeHint" onclick="dismissSwipeHint()">
+  <div class="swipeHintInner">
+    <div class="swipeHintIcon">👈 👉</div>
+    <div class="swipeHintText">左右滑動即可翻頁</div>
+    <div class="swipeHintTap">點一下畫面關閉提示</div>
+  </div>
+</div>
+
 <div class="bottomBar">
 <button class="secondary" onclick="prevPage()">← 上一頁</button>
 <button onclick="nextPage()">下一頁 →</button>
@@ -331,6 +392,7 @@ function loadPdf(){
     if(pageNum < 1) pageNum = 1;
     if(pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
     renderPage(pageNum);
+    maybeShowSwipeHint();
   }).catch(function(err){
     console.error("PDF 載入失敗：", err);
     loading.classList.add("error");
@@ -546,6 +608,7 @@ viewer.addEventListener("touchend", function(e){
   const diffY = touchEndY - touchStartY;
 
   if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+    dismissSwipeHint();
     if (diffX < 0) {
       nextPage();
     } else {
@@ -573,6 +636,38 @@ function toggleUI(){
 
   top.style.display = uiHidden ? "none" : "";
   bottom.style.display = uiHidden ? "none" : "";
+}
+
+/* ==========================
+   滑動提示（僅首次造訪顯示）
+========================== */
+
+const SWIPE_HINT_KEY = STORAGE_PREFIX + "swipeHintShown";
+let swipeHintTimer = null;
+
+function maybeShowSwipeHint(){
+  if(localStorage.getItem(SWIPE_HINT_KEY) === "true") return;
+  // 只在觸控裝置上顯示，滑鼠使用者用方向鍵/按鈕翻頁，提示沒有意義
+  if(!("ontouchstart" in window)) return;
+
+  const hint = document.getElementById("swipeHint");
+  hint.classList.add("show");
+
+  swipeHintTimer = setTimeout(dismissSwipeHint, 3200);
+}
+
+function dismissSwipeHint(){
+  const hint = document.getElementById("swipeHint");
+  if(!hint.classList.contains("show")) return;
+
+  clearTimeout(swipeHintTimer);
+  hint.classList.add("fadeOut");
+  localStorage.setItem(SWIPE_HINT_KEY, "true");
+
+  setTimeout(function(){
+    hint.classList.remove("show");
+    hint.classList.remove("fadeOut");
+  }, 350);
 }
 
 loadPdf();
