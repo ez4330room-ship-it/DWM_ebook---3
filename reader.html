@@ -102,7 +102,7 @@ canvas {
   margin-bottom: 90px;
 }#viewer,
 #pdfCanvas {
-  touch-action: pan-y;
+  touch-action: none;
 }
 
 #loading {
@@ -243,7 +243,7 @@ body.dark button.secondary {
 
 <div id="viewer">
 <div id="loading">PDF 載入中...</div>
-<canvas id="pdfCanvas" onclick="toggleUI()"></canvas>
+<canvas id="pdfCanvas"></canvas>
 </div>
 
 <div class="bottomBar">
@@ -382,13 +382,19 @@ document.addEventListener("keydown", function(e){
 
 let touchStartX = 0;
 let touchStartY = 0;
+let touchMoved = false;
 
 const viewer = document.getElementById("viewer");
 
 viewer.addEventListener("touchstart", function(e){
   touchStartX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
-}, {passive:true});
+  touchMoved = false;
+}, {passive:false});
+
+viewer.addEventListener("touchmove", function(e){
+  touchMoved = true;
+}, {passive:false});
 
 viewer.addEventListener("touchend", function(e){
   const touchEndX = e.changedTouches[0].clientX;
@@ -397,14 +403,23 @@ viewer.addEventListener("touchend", function(e){
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
 
-  if (Math.abs(diffX) > 80 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+  if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+    e.preventDefault();
+
     if (diffX < 0) {
       nextPage();
     } else {
       prevPage();
     }
+    return;
   }
-}, {passive:true});
+
+  if (!touchMoved || (Math.abs(diffX) < 10 && Math.abs(diffY) < 10)) {
+    toggleUI();
+  }
+}, {passive:false});
+
+
 /* ==========================
    點一下隱藏工具列
 ========================== */
