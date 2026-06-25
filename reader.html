@@ -240,7 +240,7 @@ body.dark button.secondary {
 
 <div id="viewer">
 <div id="loading">PDF 載入中...</div>
-<canvas id="pdfCanvas"></canvas>
+<canvas id="pdfCanvas" onclick="toggleUI()"></canvas>
 </div>
 
 <div class="bottomBar">
@@ -362,7 +362,60 @@ document.addEventListener("keydown", function(e){
   if(e.key === "ArrowLeft") prevPage();
   if(e.key === "Escape") toggleMenu(false);
 });
-</script>
+  /* ==========================
+   手機左右滑動翻頁
+========================== */
 
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", function(e){
+    touchStartX = e.changedTouches[0].screenX;
+}, {passive:true});
+
+document.addEventListener("touchend", function(e){
+
+    touchEndX = e.changedTouches[0].screenX;
+
+    const diff = touchEndX - touchStartX;
+
+    // 向左滑 → 下一頁
+    if(diff < -60){
+        nextPage();
+    }
+
+    // 向右滑 → 上一頁
+    if(diff > 60){
+        prevPage();
+    }
+
+}, {passive:true});
+</script>
+/* ==========================
+   點一下隱藏工具列
+========================== */
+
+let uiHidden = false;
+
+function toggleUI(){
+
+    const top = document.getElementById("topbar");
+    const bottom = document.querySelector(".bottomBar");
+
+    uiHidden = !uiHidden;
+
+    if(uiHidden){
+
+        top.style.display = "none";
+        bottom.style.display = "none";
+
+    }else{
+
+        top.style.display = "";
+        bottom.style.display = "";
+
+    }
+
+}
 </body>
 </html>
