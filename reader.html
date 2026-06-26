@@ -343,7 +343,7 @@ body.dark .swipeArrow {
 </div>
 
 <script type="module">
-import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
+import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.149/build/pdf.min.mjs";
 
 const pdfUrl = "pdf/DWM.pdf";
 const STORAGE_PREFIX = "DWM_"; // 加前綴避免日後多本電子書共用網域時互相覆蓋
@@ -362,7 +362,7 @@ const pageJumpInput = document.getElementById("pageJumpInput");
 const bar = document.getElementById("bar");
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.149/build/pdf.worker.min.mjs";
 
 function loadPdf(){
   loading.style.display = "block";
@@ -370,7 +370,12 @@ function loadPdf(){
   loading.firstChild.textContent = "PDF 載入中...";
   retryBtn.style.display = "none";
 
-  pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf){
+  pdfjsLib.getDocument({
+    url: pdfUrl,
+    cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.149/cmaps/",
+    cMapPacked: true,
+    standardFontDataUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.149/standard_fonts/"
+  }).promise.then(function(pdf){
     pdfDoc = pdf;
     if(pageNum < 1) pageNum = 1;
     if(pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
